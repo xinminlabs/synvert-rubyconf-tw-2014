@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>synvert - rubyconf.tw 2014</title>
+
+		<meta name="description" content="My presentation about synvert on rubyconf.tw 2014">
+		<meta name="author" content="Richard Huang">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <style type="text/css">
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        text-transform: none;
+      }
+    </style>
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+        <section>
+          <h1>Synvert</h1>
+          <h3>Improve and refactor ruby code easier</h3>
+          <p>Richard Huang</p>
+          <p>Xinmin Labs</p>
+        </section>
+
+        <section>
+          <h2>About Me</h2>
+          <ul>
+            <li>Founder at Xinmin Labs</li>
+            <li>Full Stacked Developer</li>
+            <li>Open Source Enthusiast</li>
+            <li>@flyerhzm</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>What's synvert</h2>
+        </section>
+
+        <section>
+          <h3>synvert = syntax + convert</h3>
+        </section>
+
+        <section>
+          <video data-autoplay src="video/synvert.mp4"></video>
+        </section>
+
+        <section>
+          <h2>Why synvert</h2>
+        </section>
+
+        <section>
+          <h2>Ruby world involves fast</h2>
+        </section>
+
+        <section>
+          <h3>FactoryGirl prefers short syntax</h3>
+          <pre><code class="ruby">post = FactoryGirl.create(:post)</code></pre>
+          <p>to</p>
+          <pre><code class="ruby">post = create(:post)</code></pre>
+        </section>
+
+        <section>
+          <h3>RSpec will deprecate should syntax in favor of expect</h3>
+          <pre><code class="ruby">1.should == 1</code></pre>
+          <p>to</p>
+          <pre><code class="ruby">expect(1).to eq 1</code></pre>
+        </section>
+
+        <section>
+          <h3>Rails 4 has deprecated dynamic finders</h3>
+          <pre><code class="ruby">user = User.find_last_by_email_and_active('flyerhzm@xinminlabs.com', true)</code></pre>
+          <p>to</p>
+          <pre><code class="ruby">user = User.where(email: 'flyerhzm@xinminlabs.com', active: true).last</code></pre>
+        </section>
+
+        <section>
+          <h3>It happens frequently in ruby community</h3>
+        </section>
+
+        <section>
+          <h3>We have to</h3>
+          <p>Convert syntax for project 1</p>
+          <p>......</p>
+          <p>Convert syntax for project N</p>
+        </section>
+
+        <section>
+          <h3>Other teams also have to</h3>
+          <p>Convert syntax for their projects</p>
+        </section>
+
+        <section>
+          <h3>Don't Repeat Yourself</h3>
+        </section>
+
+        <section>
+          <h3>Some tools can analyze and find out old deprecated code</h3>
+        </section>
+
+        <section>
+          <p><a href="https://github.com/railsbp/rails_best_practices">rails_best_practices</a>&nbsp;
+          (based on <a href="https://github.com/flyerhzm/code_analyzer">code_analyzer</a>)</p>
+          <img src="img/rails_best_practices_screenshot.png"/>
+        </section>
+
+        <section>
+          <h3>But you still have to change code manually</h3>
+        </section>
+
+        <section>
+          <h2>Synvert can do more</h2>
+        </section>
+
+        <section>
+          <img src="img/synvert_commit_screenshot.png"/>
+        </section>
+
+        <section>
+          <h2>How synvert works</h2>
+          <p>Synvert + Snippets</p>
+        </section>
+
+        <section>
+          <h3>Background</h3>
+          <p>AST<p>
+        </section>
+
+        <section>
+          <h3>Parser</h3>
+          <p>Ruby code</p>
+          <pre><code class="ruby">post = FactoryGirl.create(:post)</code></pre>
+          <p>AST</p>
+          <pre><code>(lvasgn :post
+  (send
+    (const nil :FactoryGirl) :create
+    (sym :post)))</code></pre>
+        </section>
+
+        <section>
+          <ul>
+            <li>Synvert can find specified files</li>
+            <li class="fragment">Synvert can convert ruby source code to ast nodes</li>
+            <li class="fragment">Synvert can find specified ast nodes</li>
+            <li class="fragment">Synvert can check if specified ast node exist or not</li>
+            <li class="fragment">Synvert can add / replace / remove specifed code</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Snippets tell synvert what to do</h3>
+        </section>
+
+        <section>
+          <h3>Snippet</h3>
+          <pre><code class="ruby">Synvert::Rewriter.new 'synvert_name' do  # Rewriter
+  if_gem 'gem_name', {gte: '1.0.0'}      # GemSpec
+
+  within_files '**/*.rb' do              # Instance
+    within_node rules_to_find_node do    # Scope
+      unless_exist_node rules do         # Condition
+        insert "what code to insert"     # Action
+      end
+    end
+  end
+end</code></pre>
+          <p>DSL: <a href="http://xinminlabs.github.io/synvert/dsl/">http://xinminlabs.github.io/synvert/dsl/</a></p>
+        </section>
+
+        <section>
+          <h2>Example</h2>
+          <h4>use FactoryGirl short syntax</h4>
+        </section>
+
+        <section>
+          <p>Adds
+          <pre><code class="ruby">include FactoryGirl::Syntax::Methods</code></pre>
+          to
+          <pre><code class="ruby">class Test::Unit::TestCase</code></pre>
+          in file
+          <pre><code class="ruby">test/test_helper.rb</code></pre></p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  within_file 'test/test_helper.rb' do
+    with_node type: 'class', name: 'Test::Unit::TestCase' do
+      insert 'include FactoryGirl::Syntax::Methods'
+    end
+  end
+end</code></pre>
+          <p>Rules: <a href="http://xinminlabs.github.io/synvert/rules/">http://xinminlabs.github.io/synvert/rules/</a></p>
+        </section>
+
+        <section>
+          <p>From factory_girl <strong>2.0.0</strong>, so let's check the gem version.</p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  # check factory_girl gem greater than 2.0.0 in Gemfile.lock
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  within_file 'test/test_helper.rb' do
+    with_node type: 'class', name: 'Test::Unit::TestCase' do
+      insert 'include FactoryGirl::Syntax::Methods'
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>It works, but it inserts code every time even when
+          <pre><code class="ruby">include FactoryGirl::Syntax::Methods</code></pre> already exist in the class, <br/>
+          so let's check if code doesn't exist, then insert.</p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  within_file 'test/test_helper.rb' do
+    with_node type: 'class', name: 'Test::Unit::TestCase' do
+      # unless include FactoryGirl::Syntax::Methods exists
+      unless_exist_node type: 'send', message: 'include',
+                        arguments: ['FactoryGirl::Syntax::Methods'] do
+        insert 'include FactoryGirl::Syntax::Methods'
+      end
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>It should also work in minitest and activesupport testcase</p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  within_file 'test/test_helper.rb' do
+    %w(Test::Unit::TestCase ActiveSupport::TestCase
+        MiniTest::Unit::TestCase MiniTest::Spec
+        MiniTest::Rails::ActiveSupport::TestCase).each do |class_name|
+      with_node type: 'class', name: class_name do
+        unless_exist_node type: 'send', message: 'include',
+                          arguments: ['FactoryGirl::Syntax::Methods'] do
+          insert 'include FactoryGirl::Syntax::Methods'
+        end
+      end
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>For RSpec, it does a bit different</p>
+          <pre><code class="ruby">RSpec.configure do |config|
+  config.incldue FactoryGirl::Syntax::Methods
+end</code></pre>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  within_file 'spec/spec_helper.rb' do
+    # match code RSpec.configure do |config|; ... end
+    within_node type: 'block', caller: {receiver: 'RSpec',
+                                        message: 'configure'} do
+      unless_exist_node type: 'send', message: 'include',
+                        arguments: ['FactoryGirl::Syntax::Methods'] do
+        # {{ }} is executed on current node, so we can add or
+        # replace with some old code,
+        # arguments are [config], arguments.first is config,
+        insert "{{arguments.first}}.include FactoryGirl::Syntax::Methods"
+      end
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>Finally, apply it for cucumber as well.</p>
+          <pre><code class="ruby">World(FactoryGirl::Syntax::Methods)</code></pre>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  within_file 'features/support/env.rb' do
+    # current node is the root node of env.rb file
+    # we don't need with_node / within_node here
+    unless_exist_node type: 'send', message: 'World',
+                      arguments: ['FactoryGirl::Syntax::Methods'] do
+      insert "World(FactoryGirl::Syntax::Methods)"
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>Then we can replace</p>
+          <pre><code class="ruby">FactoryGirl.create(:post)</code></pre>
+          <p>with</p>
+          <pre><code class="ruby">create(:post)</code></pre>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  %w(test/**/*.rb spec/**/*.rb features/**/*.rb).each do |file_pattern|
+    # find all files in test/, spec/ and features/
+    within_files file_pattern do
+      with_node type: 'send', receiver: 'FactoryGirl', message: 'create' do
+        # for FactoryGirl.create(:post, title: 'post'),
+        # arguments are :post, title: 'post'
+        replace_with "create({{arguments}})"
+      end
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+        <p>There are other short syntaxes, <br/>e.g. build, create_list, build_list, etc.</p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  %w(test/**/*.rb spec/**/*.rb features/**/*.rb).each do |file_pattern|
+    within_files file_pattern do
+      %w(create build attributes_for build_stubbed create_list build_list
+          create_pair build_pair).each do |message|
+        with_node type: 'send', receiver: 'FactoryGirl', message: message do
+          replace_with "#{message}({{arguments}})"
+        end
+      end
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>Finally write description for the rewriter</p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
+  description <<-EOF
+1. it adds FactoryGirl::Syntax::methods module to RSpec, Test::Unit,
+   Cucumber, Spainach, MiniTest, MiniTest::Spec, minitest-rails.
+
+2. it converts to short syntax.
+
+    FactoryGirl.create(...) => create(...)
+    FactoryGirl.build(...) => build(...)
+    ......
+  EOF
+
+  if_gem 'factory_girl', {gte: '2.0.0'}
+
+  ......
+end</code></pre>
+        </section>
+
+        <section>
+          <h2>Complex Example</h2>
+          <h4>Convert rails dynamic finders</h4>
+        </section>
+
+        <section>
+          <p>From rails 4, dynamic finders are deprecated</p>
+          <pre><code class="ruby">User.find_last_by_email_and_active('flyerhzm@xinminlabs.com', true)</code></pre>
+          <p>to</p>
+          <pre><code class="ruby">User.where(email: 'flyerhzm@xinminlabs.com', active: true).last</code></pre>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new "convert_dynamic_finders" do
+  within_files '**/*.rb' do
+    with_node type: 'send', message: /^find_last_by_(.*)/ do
+      # node is current matching ast node
+      # you can add any ruby code in the block
+      # here we convert dynamic finder message to hash params, e.g.
+      # email_and_active('email', active) to email: 'email', active: active
+      #
+      # node.source(self) is used to get original ruby source code
+      # {{receiver}} gets the receiver of current ast node
+      fields = node.message.to_s["find_last_by_".length..-1].split("_and_")
+      hash_params = fields.length.times.map { |i|
+        fields[i] + ": " + node.arguments[i].source(self)
+      }.join(", ")
+      replace_with "{{receiver}}.where(#{hash_params}).last"
+    end
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <p>Let's use helper_method for other dynamic finders.</p>
+        </section>
+
+        <section>
+					<pre><code class="ruby">Synvert::Rewriter.new "convert_dynamic_finders" do
+  helper_method 'dynamic_finder_to_hash' do |prefix|
+    fields = node.message.to_s[prefix.length..-1].split("_and_")
+    fields.length.times.map { |i|
+      fields[i] + ": " + node.arguments[i].source(self)
+    }.join(", ")
+  end
+  within_files '**/*.rb' do
+    with_node type: 'send', message: /^find_all_by_(.*)/ do
+      hash_params = dynamic_finder_to_hash("find_all_by_")
+      replace_with "{{receiver}}.where(#{hash_params})"
+    end
+    with_node type: 'send', message: /^find_last_by_(.*)/ do
+      hash_params = dynamic_finder_to_hash("find_last_by_")
+      replace_with "{{receiver}}.where(#{hash_params}).last"
+    end
+    ......
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <h2>Available Snippets</h2>
+          <ul>
+            <li>factory_girl_short_syntax</li>
+            <li>upgrade_rails_3_0_to_3_1</li>
+            <li>upgrade_rails_3_1_to_3_2</li>
+            <li>upgrade_rails_3_2_to_4_0</li>
+            <li>rspec_new_syntax</li>
+            <li>ruby_new_hash_syntax</li>
+            <li>ruby_new_lambda_syntax</li>
+            <li>......</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Still in alpha stage</h2>
+          <p>Issues and pull requests are welcome</p>
+        </section>
+
+        <section>
+          <h2>References</h2>
+          <ul>
+            <li>synvert <a href="https://github.com/xinminlabs/synvert">https://github.com/xinminlabs/synvert</a></li>
+            <li>parser <a href="https://github.com/whitequark/parser">https://github.com/whitequark/parser</a></li>
+            <li>rails_best_practices <a href="https://github.com/railsbp/rails_best_practices">https://github.com/railsbp/rails_best_practices</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Q & A</h2>
+          <h3>Thank you</h3>
+        </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
