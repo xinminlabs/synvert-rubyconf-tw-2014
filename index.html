@@ -78,7 +78,7 @@
         </section>
 
         <section>
-          <video data-autoplay src="video/synvert.mp4"></video>
+          <video data-autoplay class="stretch" src="video/synvert.mp4"></video>
         </section>
 
         <section>
@@ -337,7 +337,7 @@ end</code></pre>
         </section>
 
         <section>
-          <p>Then we can replace</p>
+          <p>Now we can replace</p>
           <pre><code class="ruby">FactoryGirl.create(:post)</code></pre>
           <p>with</p>
           <pre><code class="ruby">create(:post)</code></pre>
@@ -523,6 +523,9 @@ end</code></pre>
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
 				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        width: 1024,
+        height: 768,
 
 				// Parallax scrolling
 				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
