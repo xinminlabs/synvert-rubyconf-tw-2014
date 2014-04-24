@@ -233,7 +233,7 @@ end</code></pre>
 
         <section>
 					<pre><code class="ruby">Synvert::Rewriter.new 'factory_girl_short_syntax' do
-  # check factory_girl gem greater than 2.0.0 in Gemfile.lock
+  # check if factory_girl gem greater than or equal to 2.0.0 in Gemfile.lock
   if_gem 'factory_girl', {gte: '2.0.0'}
 
   within_file 'test/test_helper.rb' do
@@ -495,7 +495,6 @@ end</code></pre>
           <ul>
             <li>synvert <a href="https://github.com/xinminlabs/synvert">https://github.com/xinminlabs/synvert</a></li>
             <li>parser <a href="https://github.com/whitequark/parser">https://github.com/whitequark/parser</a></li>
-            <li>rails_best_practices <a href="https://github.com/railsbp/rails_best_practices">https://github.com/railsbp/rails_best_practices</a></li>
           </ul>
         </section>
 
